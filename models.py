@@ -155,20 +155,20 @@ class MYNET(torch.nn.Module):
         
         # Enhanced classification and regression heads
         self.classifier = nn.Sequential(
-            nn.Linear(n_embedding_dim, n_embedding_dim), 
-            nn.GELU(), 
+            nn.Linear(n_embedding_dim, n_embedding_dim),
+            nn.GELU(),
             nn.LayerNorm(n_embedding_dim),
             nn.Dropout(dropout),
             nn.Linear(n_embedding_dim, n_class)
         )
         self.regressor = nn.Sequential(
-            nn.Linear(n_embedding_dim, n_embedding_dim), 
-            nn.GELU(), 
+            nn.Linear(n_embedding_dim, n_embedding_dim),
+            nn.GELU(),
             nn.LayerNorm(n_embedding_dim),
             nn.Dropout(dropout),
             nn.Linear(n_embedding_dim, 2)
         )
-        
+
         self.decoder_token = nn.Parameter(torch.Tensor(len(self.anchors), 1, n_embedding_dim))
         nn.init.normal_(self.decoder_token, std=0.01)
         
@@ -211,15 +211,15 @@ class MYNET(torch.nn.Module):
         # Decoder processing
         decoder_token = self.decoder_token.expand(-1, encoded_x.shape[1], -1)
         decoded_x = self.decoder(decoder_token, encoded_x)
-        
+
         # Add residual connection and normalization
         decoded_x = self.norm2(decoded_x + self.dropout1(decoder_token))
-        
+
         decoded_x = decoded_x.permute([1, 0, 2])
-        
+
         anc_cls = self.classifier(decoded_x)
         anc_reg = self.regressor(decoded_x)
-        
+
         return anc_cls, anc_reg
 
 
