@@ -117,7 +117,21 @@ def parse_opt():
         type=float,
         default=1.0,
         help='Coefficient for the DIoU loss when --diou is enabled.')
-
+    parser.add_argument(
+        '--GLH',
+        default=False,
+        action='store_true',
+        help='Enable Gaussian Latent History cross-attention after the encoder.')
+    parser.add_argument(
+        '--glh_gaussians',
+        type=int,
+        default=8,
+        help='Number of Gaussian primitives K in the GLH bank.')
+    parser.add_argument(
+        '--glh_kl_weight',
+        type=float,
+        default=1e-4,
+        help='Weight for the GLH KL regularization term.')
     # Training settings
     parser.add_argument(
         '--batch_size',
